@@ -1,0 +1,18 @@
+version: 0.0
+environment_variables:
+  plaintext:
+    "S3_BUCKET": ""
+    "DomainName": ""
+    "Name": ""
+    "CertArn": ""
+containers:
+  LambdaFunctions:
+    phases:
+      during_build:
+        commands:
+          - npm install
+          - node parseyaml.js --param.DomainName=$DomainName --param.Name=$Name --param.CertArn=$CertArn
+          - aws cloudformation package --template saml.yaml --s3-bucket $S3_BUCKET --output-template post-saml.yaml
+    artifacts:
+      files:
+        - post-saml.yaml
